@@ -9,11 +9,6 @@
 
 A Model Context Protocol (MCP) server implementation that provides Elasticsearch and OpenSearch interaction. This server enables searching documents, analyzing indices, and managing cluster through a set of tools.
 
-<a href="https://glama.ai/mcp/servers/b3po3delex"><img width="380" height="200" src="https://glama.ai/mcp/servers/b3po3delex/badge" alt="Elasticsearch MCP Server" /></a>
-
-## Demo
-
-https://github.com/user-attachments/assets/f7409e31-fac4-4321-9c94-b0ff2ea7ff15
 
 ## Features
 
@@ -122,7 +117,7 @@ Using `uv` requires cloning the repository locally and specifying the path to th
       "command": "uv",
       "args": [
         "--directory",
-        "path/to/src/elasticsearch_mcp_server",
+        "path\\to_folder_proyect\\elasticsearch_mcp_server",
         "run",
         "elasticsearch-mcp-server"
       ],
@@ -142,18 +137,20 @@ Using `uv` requires cloning the repository locally and specifying the path to th
       "command": "uv",
       "args": [
         "--directory",
-        "path/to/src/elasticsearch_mcp_server",
+        "path\\to_folder_proyect\\elasticsearch-mcp-server",
         "run",
         "opensearch-mcp-server"
       ],
       "env": {
         "OPENSEARCH_HOSTS": "https://localhost:9200",
         "OPENSEARCH_USERNAME": "admin",
-        "OPENSEARCH_PASSWORD": "admin"
+        "OPENSEARCH_PASSWORD": "admin",
+        "OPENSEARCH_VERIFY_CERTS": "false"
       }
     }
   }
 }
+
 ```
 
 ## SSE
@@ -176,11 +173,18 @@ uvx elasticsearch-mcp-server --transport sse --host 0.0.0.0 --port 8000 --path /
 ### Option 2: Using uv
 
 ```bash
+
+py -m pip install u #LOCAL MACHINE
+pip install uv     #VIRTUAL ENV
+
 # By default, the SSE MCP server will serve on http://127.0.0.1:8000/sse
 uv run src/server.py elasticsearch-mcp-server --transport sse
+uv run src/server.py opensearch-mcp-server --transport sse
 
 # The host, port, and path can be specified using the --host, --port, and --path options
 uv run src/server.py elasticsearch-mcp-server --transport sse --host 0.0.0.0 --port 8000 --path /sse
+uv run src/server.py opensearch-mcp-server --transport sse --host 0.0.0.0 --port 8000 --path /sse
+opensearch-mcp-server
 ```
 
 ## Streamable HTTP
@@ -202,12 +206,18 @@ uvx elasticsearch-mcp-server --transport streamable-http --host 0.0.0.0 --port 8
 
 ### Option 2: Using uv
 
+
+
 ```bash
+
+py -m pip install u #LOCAL MACHINE
+pip install uv     #VIRTUAL ENV
 # By default, the Streamable HTTP MCP server will serve on http://127.0.0.1:8000/mcp
 uv run src/server.py elasticsearch-mcp-server --transport streamable-http
 
 # The host, port, and path can be specified using the --host, --port, and --path options
 uv run src/server.py elasticsearch-mcp-server --transport streamable-http --host 0.0.0.0 --port 8000 --path /mcp
+uv run src/server.py opensearch-mcp-server --transport streamable-http --host 0.0.0.0 --port 8000 --path /mcp
 ```
 
 ## License
