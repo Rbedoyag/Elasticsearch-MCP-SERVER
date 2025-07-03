@@ -39,12 +39,23 @@ class SearchClientBase(ABC):
         
         # Initialize client based on engine type
         if engine_type == "elasticsearch":
-            self.client = Elasticsearch(
-                hosts=hosts,
-                basic_auth=(username, password) if username and password else None,
-                verify_certs=verify_certs
-            )
-            self.logger.info(f"Elasticsearch client initialized with hosts: {hosts}")
+            cloud_id = config.get("cloud_id")
+            api_key = config.get("api_key")
+            
+            if cloud_id and api_key:
+                self.client = Elasticsearch(
+                    cloud_id=cloud_id,
+                    api_key=api_key,
+                    verify_certs=True
+                )
+                self.logger.info(f"Elasticsearch client initialized with Cloud ID.")
+            else:
+                self.client = Elasticsearch(
+                    hosts=hosts,
+                    basic_auth=(username, password) if username and password else None,
+                    verify_certs=verify_certs
+                )
+                self.logger.info(f"Elasticsearch client initialized with hosts: {hosts}")
         elif engine_type == "opensearch":
             self.client = OpenSearch(
                 hosts=hosts,

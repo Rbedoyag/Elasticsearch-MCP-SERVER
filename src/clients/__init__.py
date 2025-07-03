@@ -1,5 +1,4 @@
 import os
-
 from dotenv import load_dotenv
 
 from src.clients.common.client import SearchClient
@@ -15,23 +14,33 @@ def create_search_client(engine_type: str) -> SearchClient:
     Returns:
         A search client instance
     """
-    # Load configuration from environment variables
+    # Load .env if present
     load_dotenv()
     
-    # Get configuration from environment variables
-    prefix = engine_type.upper()
-    hosts_str = os.environ.get(f"{prefix}_HOSTS", "https://localhost:9200")
-    hosts = [host.strip() for host in hosts_str.split(",")]
-    username = os.environ.get(f"{prefix}_USERNAME")
-    password = os.environ.get(f"{prefix}_PASSWORD")
-    verify_certs = os.environ.get(f"{prefix}_VERIFY_CERTS", "false").lower() == "true"
+    config = {}
+
+    # Elastic Cloud override
+    cloud_id = os.environ.get("ELASTIC_CLOUD_ID")
+    api_key = os.environ.get("ELASTIC_API_KEY")
     
-    config = {
-        "hosts": hosts,
-        "username": username,
-        "password": password,
-        "verify_certs": verify_certs
-    }
+    if engine_type == "elasticsearch" and cloud_id and api_key:
+        config["cloud_id"] = cloud_id
+        config["api_key"] = api_key
+        config["verify_certs"] = True  # Siempre recomendado en Elastic Cloud
+    else:
+        prefix = engine_type.upper()
+        hosts_str = os.environ.get(f"{prefix}_HOSTS", "https://localhost:9200")
+        hosts = [host.strip() for host in hosts_str.split(",")]
+        username = os.environ.get(f"{prefix}_USERNAME")
+        password = os.environ.get(f"{prefix}_PASSWORD")
+        verify_certs = os.environ.get(f"{prefix}_VERIFY_CERTS", "false").lower() == "true"
+        
+        config = {
+            "hosts": hosts,
+            "username": username,
+            "password": password,
+            "verify_certs": verify_certs
+        }
     
     return SearchClient(config, engine_type)
 
